@@ -14,8 +14,6 @@ Este es un sistema de registro web desarrollado con Flask y conectado a una base
 - PostgreSQL
 - HTML, CSS
 
-## Captura de pantalla
-*(Aquí puedes subir una imagen de tu app si quieres)*
 
 ## Cómo ejecutar
 ```bash
