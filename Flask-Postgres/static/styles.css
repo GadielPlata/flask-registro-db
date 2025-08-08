@@ -1,0 +1,96 @@
+/* General container style */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #e0eafc, #cfdef3);
+    min-height: 100vh;
+}
+
+.container {
+    width: 90%;
+    margin: 0 auto;
+    text-align: center;
+    padding-top: 50px;
+}
+
+/* Title style */
+h2 {
+    font-size: 2.5rem;
+    color: #2c3e50;
+    margin-bottom: 40px;
+}
+
+/* Card group container */
+.card-group {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin: 20px 0;
+}
+
+/* Individual card style */
+.card {
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    padding: 30px 20px;
+    width: 260px;
+    text-align: center;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+/* Card headings */
+.card h3 {
+    font-size: 1.7rem;
+    color: #1f2d3d;
+    margin-bottom: 15px;
+}
+
+/* Card paragraph */
+.card p {
+    font-size: 1rem;
+    color: #3d3d3d;
+    margin-bottom: 25px;
+}
+
+/* Button style */
+.btn {
+    background: #6c63ff;
+    color: white;
+    padding: 12px 24px;
+    text-decoration: none;
+    border-radius: 30px;
+    font-size: 1rem;
+    display: inline-block;
+    transition: background 0.3s ease, transform 0.2s;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.btn:hover {
+    background: #5848e9;
+    transform: translateY(-3px);
+}
+
+/* Unique button colors per card */
+.card:nth-child(1) .btn { background-color: #2c87f0; }
+.card:nth-child(2) .btn { background-color: #28a745; }
+.card:nth-child(3) .btn { background-color: #17a2b8; }
+.card:nth-child(4) .btn { background-color: #6f42c1; }
+.card:nth-child(5) .btn { background-color: #dc3545; }
+.card:nth-child(6) .btn { background-color: #ffc107; }
+
+.card:nth-child(1) .btn:hover { background-color: #1b6ddc; }
+.card:nth-child(2) .btn:hover { background-color: #218838; }
+.card:nth-child(3) .btn:hover { background-color: #138496; }
+.card:nth-child(4) .btn:hover { background-color: #5936a8; }
+.card:nth-child(5) .btn:hover { background-color: #c82333; }
+.card:nth-child(6) .btn:hover { background-color: #e0a800; }

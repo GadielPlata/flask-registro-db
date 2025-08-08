@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Clínica Veterinaria</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f8;
+    }
+
+    header {
+      background-color: #337567;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+    .profile {
+      text-align: center;
+    }
+    .profile-pic {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .container {
+      display: flex;
+      height: calc(100vh - 60px);
+    }
+
+    .sidebar {
+      width: 220px;
+      background-color: #25AFA1;
+      color: white;
+      padding: 20px 10px;
+      box-sizing: border-box;
+    }
+
+    .sidebar h2 {
+      font-size: 16px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #5c6bc0;
+      padding-bottom: 10px;
+    }
+
+    .sidebar a {
+      display: block;
+      color: white;
+      text-decoration: none;
+      padding: 10px;
+      margin-bottom: 5px;
+      border-radius: 5px;
+    }
+
+    .sidebar a:hover,
+    .sidebar a.active {
+      background-color: #5c6bc0;
+    }
+
+    .main-content {
+      flex-grow: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+      justify-items: center;
+      max-width: 600px;
+      margin: 0 auto;
+      margin-top: 40px;
+    }
+
+    .card {
+      text-align: center;
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .card img {
+      width: 200px;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+    .card button {
+      margin-top: 10px;
+      padding: 8px 12px;
+      background-color: #3f51b5;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .card button:hover {
+      background-color: #303f9f;
+    }
+    .button-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .button-group button {
+      padding: 8px 14px;
+      background-color: #337567;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .btn {
+    margin: 10px;
+    padding: 10px 16px;
+    background-color: #3f51b5;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    }
+    .btnm {
+    margin: 10px;
+    padding: 10px 16px;
+    background-color: #ff0000;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    }
+    .btn:hover {
+        background-color: #303f9f;
+    }
+    .button-group button:hover {
+      background-color: #285f55;
+    }
+    .card button:hover {
+      background-color: #285f55;
+    }
+    .button-row button:hover {
+            background-color: #303f9f;
+        }
+        .search-section {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .search-section input {
+            padding: 8px;
+            width: 200px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .search-section button {
+            padding: 8px 12px;
+            margin-left: 10px;
+            background-color: #3f51b5;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .search-section button:hover {
+            background-color: #303f9f;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+  </style>
+
+  <script>
+    function activarConsola() {
+    document.querySelector('.main-content').innerHTML = `
+        <div style="max-width: 800px; margin: 30px auto; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+            <h3 style="text-align: center; margin-bottom: 20px;">Consola SQL (PostgreSQL)</h3>
+            <label for="sqlQuery" style="display: block; margin-bottom: 8px;">Escriba su consulta:</label>
+            <textarea id="sqlQuery" rows="6" placeholder="SELECT * FROM mi_tabla;" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc; font-family: monospace;"></textarea>
+            <button onclick="ejecutarConsulta()" style="margin-top: 15px; padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px;">Ejecutar</button>
+
+            <h4 style="margin-top: 30px;">Resultados:</h4>
+            <div id="resultadoConsulta" style="margin-top: 10px; background: #f1f1f1; padding: 15px; border-radius: 5px; font-family: monospace; white-space: pre-wrap;"></div>
+        </div>
+    `;
+}
+
+function ejecutarConsulta() {
+    const consulta = document.getElementById('sqlQuery').value;
+
+    fetch('/ejecutar_consulta', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: consulta })
+    })
+    .then(res => res.json())
+    .then(data => {
+        const resultadoDiv = document.getElementById('resultadoConsulta');
+        if (data.error) {
+            resultadoDiv.innerHTML = `<span style="color: red;">${data.error}</span>`;
+        } else {
+            if (data.resultado.length === 0) {
+                resultadoDiv.innerHTML = 'Consulta ejecutada correctamente, sin resultados.';
+            } else {
+                // Mostrar como tabla
+                const headers = Object.keys(data.resultado[0]);
+                let tabla = '<table style="width: 100%; border-collapse: collapse;">';
+                tabla += '<tr>' + headers.map(h => `<th style="border: 1px solid #ccc; padding: 5px; background: #eee;">${h}</th>`).join('') + '</tr>';
+                data.resultado.forEach(fila => {
+                    tabla += '<tr>' + headers.map(h => `<td style="border: 1px solid #ccc; padding: 5px;">${fila[h]}</td>`).join('') + '</tr>';
+                });
+                tabla += '</table>';
+                resultadoDiv.innerHTML = tabla;
+            }
+        }
+    })
+    .catch(err => {
+        document.getElementById('resultadoConsulta').innerHTML = `<span style="color: red;">Error: ${err}</span>`;
+    });
+}
+    function mostrarFormularioQuitarProducto() {
+    document.querySelector('.main-content').innerHTML = `
+        <div style="max-width: 400px; margin: 40px auto; background-color: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <h3 style="text-align: center; margin-bottom: 20px;">Quitar Producto</h3>
+            <label for="id_producto_quitar" style="display: block; margin-bottom: 8px;">ID Producto:</label>
+            <input type="number" id="id_producto_quitar" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 5px; border: 1px solid #ccc;" required>
+
+            <div style="display: flex; justify-content: space-between;">
+                <button onclick="verProducto()" style="flex: 1; margin-right: 10px; padding: 10px; background-color: #2196F3; color: white; border: none; border-radius: 5px;">Ver</button>
+                <button onclick="eliminarProducto()" style="flex: 1; margin-left: 10px; padding: 10px; background-color: #F44336; color: white; border: none; border-radius: 5px;">Eliminar</button>
+            </div>
+
+            <div id="infoProducto" style="margin-top: 20px; font-size: 14px; color: #333;"></div>
+        </div>
+    `;
+}
+
+function verProducto() {
+    const id = document.getElementById('id_producto_quitar').value;
+
+    fetch('/ver_producto', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_producto: id })
+    })
+    .then(res => res.json())
+    .then(data => {
+        const infoDiv = document.getElementById('infoProducto');
+        if (data.error) {
+            infoDiv.innerHTML = `<span style="color: red;">${data.error}</span>`;
+        } else {
+            infoDiv.innerHTML = `
+                <strong>Producto:</strong><br>
+                ID: ${data.id_prod}<br>
+                Nombre: ${data.nombre}<br>
+                Precio: ${data.precio}<br>
+                Marca: ${data.marca}<br>
+                Stock: ${data.stock}<br>
+                ID Movimiento: ${data.id_mov}
+            `;
+        }
+    })
+    .catch(err => {
+        document.getElementById('infoProducto').innerHTML = `<span style="color: red;">Error: ${err}</span>`;
+    });
+}
+
+function eliminarProducto() {
+    const id = document.getElementById('id_producto_quitar').value;
+
+    fetch('/eliminar_producto', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_producto: id })
+    })
+    .then(res => res.json())
+    .then(data => {
+        const infoDiv = document.getElementById('infoProducto');
+        if (data.error) {
+            infoDiv.innerHTML = `<span style="color: red;">${data.error}</span>`;
+        } else {
+            infoDiv.innerHTML = `<span style="color: green;">${data.mensaje}</span>`;
+        }
+    })
+    .catch(err => {
+        document.getElementById('infoProducto').innerHTML = `<span style="color: red;">Error: ${err}</span>`;
+    });
+}
+
+    function activarInventario() {
+    // Activar enlace en el menú
+    const links = document.querySelectorAll('.sidebar a');
+    links.forEach(link => link.classList.remove('active'));
+    document.getElementById('inventario-link').classList.add('active');
+
+    // Contenido dinámico
+    document.querySelector('.main-content').innerHTML = `
+        <h2 style="text-align:center">Gestión de Inventario</h2>
+
+        <h3>Agregar Movimiento</h3>
+        <div>
+            <input type="text" id="tipo" placeholder="Tipo (entrada/salida)">
+            <input type="number" id="cantidad" placeholder="Cantidad">
+            <input type="date" id="fecha">
+            <input type="number" id="id_admin" placeholder="ID Admin">
+            <input type="number" id="id_vacuna" placeholder="ID Vacuna">
+            <input type="number" id="id_tratamiento" placeholder="ID Tratamiento">
+            <button class="btn" onclick="agregarMovimiento()">Agregar</button>
+        </div>
+
+        <hr>
+
+        <h3>Agregar Producto</h3>
+        <div>
+            <input type="text" id="nombre" placeholder="Nombre">
+            <input type="number" id="precio" placeholder="Precio">
+            <input type="text" id="marca" placeholder="Marca">
+            <input type="number" id="stock" placeholder="Stock">
+            <input type="number" id="id_mov" placeholder="ID Movimiento">
+            <button class="btn" onclick="agregarProducto()">Agregar</button>
+            <button class="btnm" onclick="mostrarFormularioQuitarProducto()">Quitar</button>
+        </div>
+
+        <hr>
+
+        <div style="text-align:center; margin-top:30px;">
+            <pre id="resultado-texto" style="white-space: pre-wrap; border: 1px solid #ccc; padding: 10px;"></pre>
+            <button class="btn" onclick="mostrarTextoMovimientos()">Lista de Movimientos</button>
+            <button class="btn" onclick="mostrarTextoProductos()">Lista de Productos</button>
+        </div>
+    `;
+}
+
+function mostrarTextoMovimientos() {
+    fetch('/texto_movimiento')
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById('resultado-texto').innerText = data.texto || 'No hay movimientos.';
+    })
+    .catch(err => {
+        console.error(err);
+        document.getElementById('resultado-texto').innerText = 'Error al cargar movimientos.';
+    });
+}
+
+function mostrarTextoProductos() {
+    fetch('/texto_producto')
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById('resultado-texto').innerText = data.texto || 'No hay productos.';
+    })
+    .catch(err => {
+        console.error(err);
+        document.getElementById('resultado-texto').innerText = 'Error al cargar productos.';
+    });
+}
+function agregarProducto() {
+    const data = {
+        nombre: document.getElementById('nombre').value,
+        precio: document.getElementById('precio').value,
+        marca: document.getElementById('marca').value,
+        stock: document.getElementById('stock').value,
+        id_mov: document.getElementById('id_mov').value
+    };
+
+    fetch('/agregar_producto', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(response => {
+        if (response.mensaje) {
+            alert(response.mensaje);
+            document.getElementById('nombre').value = "";
+            document.getElementById('precio').value = "";
+            document.getElementById('marca').value = "";
+            document.getElementById('stock').value = "";
+            document.getElementById('id_mov').value = "";
+        } else {
+            alert("Error: " + response.error);
+        }
+    });
+}
+function agregarMovimiento() {
+    const data = {
+        tipo: document.getElementById('tipo').value,
+        cantidad: document.getElementById('cantidad').value,
+        fecha: document.getElementById('fecha').value,
+        id_admin: document.getElementById('id_admin').value,
+        id_vacuna: document.getElementById('id_vacuna').value,
+        id_tratamiento: document.getElementById('id_tratamiento').value
+    };
+
+    fetch('/agregar_movimiento', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(response => {
+        if (response.mensaje) {
+            alert(response.mensaje);
+            document.getElementById('tipo').value = "";
+            document.getElementById('cantidad').value = "";
+            document.getElementById('fecha').value = "";
+            document.getElementById('id_admin').value = "";
+            document.getElementById('id_vacuna').value = "";
+            document.getElementById('id_tratamiento').value = "";
+        } else {
+            alert("Error: " + response.error);
+        }
+    });
+}
+
+
+    function agendarCita() {
+    const data = {
+        id_mascota: document.getElementById('id_mascota').value,
+        id_servicio: document.getElementById('id_servicio').value,
+        fecha: document.getElementById('fecha').value,
+        hora: document.getElementById('hora').value
+    };
+
+    fetch('/agendar_cita', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(response => {
+        if (response.mensaje) {
+            alert(response.mensaje);
+            document.getElementById('id_mascota').value = "";
+            document.getElementById('id_servicio').value = "";
+            document.getElementById('fecha').value = "";
+            document.getElementById('hora').value = "";
+        } else {
+            alert("Error: " + response.error);
+        }
+    });
+}
+function mostrarTextoAgenda() {
+    fetch('/texto_agenda')
+    .then(res => res.json())
+    .then(data => {
+        if(data.texto) {
+            document.getElementById('resultado-texto').innerText = data.texto;
+        } else {
+            document.getElementById('resultado-texto').innerText = 'No hay datos.';
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        document.getElementById('resultado-texto').innerText = 'Error al cargar datos.';
+    });
+}
+
+    function activarCitas() {
+    // Activar enlace en el menú
+    const links = document.querySelectorAll('.sidebar a');
+    links.forEach(link => link.classList.remove('active'));
+    document.getElementById('citas-link').classList.add('active');
+
+    // Contenido dinámico
+    document.querySelector('.main-content').innerHTML = `
+        <h2 style="text-align:center">Agendar Cita</h2>
+        <div class="form-section" style="text-align:center;">
+            <label>ID Mascota: <input type="number" id="id_mascota" required></label><br>
+            <label>ID Servicio: <input type="number" id="id_servicio" required></label><br>
+            <label>Fecha: <input type="date" id="fecha" required></label><br>
+            <label>Hora: <input type="time" id="hora" required></label><br>
+            <button class="btn" onclick="agendarCita()">Agendar</button>
+        </div>
+        <hr>
+        <div style="text-align:center; margin-top:20px;">
+            <pre id="resultado-texto" style="white-space: pre-wrap; border: 1px solid #ccc; padding: 10px;"></pre>
+            <button class="btn" onclick="mostrarTextoAgenda()">Lista de Citas</button>
+        </div>
+        <div id="resultado-citas" style="margin-top: 20px;"></div>
+    `;
+}
+
+     function activarReporte() {
+        const links = document.querySelectorAll('.sidebar a');
+        links.forEach(link => link.classList.remove('active'));
+        document.getElementById('report-link').classList.add('active');
+
+        document.querySelector('.main-content').innerHTML = `
+            <h2 style="text-align:center">Historial de Mascota</h2>
+            <div class="search-section">
+                <input type="text" id="input-id-mascota" placeholder="Ingrese ID de mascota">
+                <button onclick="buscarHistorial()">Buscar</button>
+                <div id="tabla-tratamientos"></div>
+                <div id="tabla-servicios"></div>
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn" onclick="listar('propietarios')">Listar Propietarios</button>
+                <button class="btn" onclick="listar('mascotas')">Listar Mascotas</button>
+                <button class="btn" onclick="listar('servicios')">Listar Servicios</button>
+                <button class="btn" onclick="listar('personal')">Listar Personal</button>
+            </div>
+            <div id="tabla-resultados"></div>`;
+    }
+  function buscarHistorial() {
+    const id = document.getElementById('input-id-mascota').value;
+
+    fetch('/buscar_historial', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_mascota: id })
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Render tratamientos
+        const tratamientos = data.tratamientos;
+        let htmlTratamientos = "<h3>Tratamientos</h3><table border='1'><tr><th>ID</th><th>Observaciones</th><th>Inicio</th><th>Fin</th></tr>";
+        tratamientos.forEach(t => {
+            htmlTratamientos += `<tr><td>${t[0]}</td><td>${t[1]}</td><td>${t[2]}</td><td>${t[3]}</td></tr>`;
+        });
+        htmlTratamientos += "</table>";
+        document.getElementById('tabla-tratamientos').innerHTML = htmlTratamientos;
+
+        // Render servicios
+        const servicios = data.servicios;
+        let htmlServicios = "<h3>Servicios</h3><table border='1'><tr><th>ID</th><th>Precio</th><th>Vacuna</th><th>Corte</th><th>Cirugía</th></tr>";
+        servicios.forEach(s => {
+            htmlServicios += `<tr><td>${s[0]}</td><td>${s[1]}</td><td>${s[2] || ''}</td><td>${s[3] || ''}</td><td>${s[4] || ''}</td></tr>`;
+        });
+        htmlServicios += "</table>";
+        document.getElementById('tabla-servicios').innerHTML = htmlServicios;
+    });
+}
+function listar(tipo) {
+    fetch(`/listar/${tipo}`)
+        .then(res => res.json())
+        .then(data => {
+            if (!Array.isArray(data) || data.length === 0) {
+                document.getElementById('tabla-resultados').innerHTML = `<p>No se encontraron datos de ${tipo}.</p>`;
+                return;
+            }
+
+            const tabla = data.map((fila, i) =>
+                '<tr>' + fila.map(col => `<${i === 0 ? 'th' : 'td'}>${col}</${i === 0 ? 'th' : 'td'}>`).join('') + '</tr>'
+            ).join('');
+
+            document.getElementById('tabla-resultados').innerHTML = `<table border="1">${tabla}</table>`;
+        })
+        .catch(err => {
+            console.error(err);
+            document.getElementById('tabla-resultados').innerHTML = `<p>Error cargando datos de ${tipo}</p>`;
+        });
+}
+
+    function mostrarInicio() {
+  const links = document.querySelectorAll('.sidebar a');
+  links.forEach(link => link.classList.remove('active'));
+
+  const homeLink = document.getElementById('home-link');
+  homeLink.classList.add('active');
+
+  document.querySelector('.main-content').innerHTML = `
+    <div style="text-align: center; margin-top: 40px;">
+      <img src="/static/images/logo.jpg" alt="Logo Clínica" style="max-width: 300px;">
+      <h2 style="margin-top: 20px;">Bienvenido al sistema de gestión de la clínica veterinaria</h2>
+      <p>Seleccione una opción del menú lateral para comenzar.</p>
+    </div>
+  `;
+}
+
+    function activarAdmin() {
+    const links = document.querySelectorAll('.sidebar a');
+    links.forEach(link => link.classList.remove('active'));
+    document.getElementById('admin-link').classList.add('active');
+
+    document.querySelector('.main-content').innerHTML = `
+      <div class="dashboard">
+        <div class="card">
+          <img src="/static/images/propietarios.jpg" alt="Propietario">
+          <div class="button-group">
+            <button onclick="mostrarFormulario('Propietario')">Agregar</button>
+            <button onclick="mostrarFormularioQuitar('Propietario')">Quitar</button>
+            <button>Editar</button>
+          </div>
+        </div>
+        <div class="card">
+          <img src="/static/images/mascotas.jpg" alt="Mascota">
+          <div class="button-group">
+            <button onclick="mostrarFormulario('Mascota')">Agregar</button>
+            <button onclick="mostrarFormularioQuitar('Mascota')">Quitar</button>
+            <button>Editar</button>
+          </div>
+        </div>
+        <div class="card">
+          <img src="/static/images/personal.jpg" alt="Personal">
+          <div class="button-group">
+            <button onclick="mostrarFormulario('Personal')">Agregar</button>
+            <button onclick="mostrarFormularioQuitar('Personal')">Quitar</button>
+            <button>Editar</button>
+          </div>
+        </div>
+        <div class="card">
+          <img src="/static/images/servicios.png" alt="Servicios">
+          <div class="button-group">
+            <button onclick="mostrarFormulario('Servicios')">Agregar</button>
+            <button onclick="mostrarFormularioQuitar('Servicios')">Quitar</button>
+            <button>Editar</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  function mostrarFormularioQuitar(tipo) {
+    let titulo = '';
+    let subtitulo = '';
+    let funcionVer = '';
+    let funcionEliminar = '';
+
+    if (tipo === 'Propietario') {
+        titulo = 'Quitar Propietario';
+        subtitulo= 'Carnet de Identidad';
+        funcionVer = 'verPropietario()';
+        funcionEliminar = 'eliminarPropietario()';
+    } else if (tipo === 'Mascota') {
+        titulo = 'Quitar Mascota';
+        subtitulo= 'Id_Mascota';
+        funcionVer = 'verMascota()';
+        funcionEliminar = 'eliminarMascota()';
+    } else if (tipo === 'Servicios') {
+        titulo = 'Quitar Servicio';
+        subtitulo= 'Id_Servicio';
+        funcionVer = 'verServicio()';
+        funcionEliminar = 'eliminarServicio()';
+    } else if (tipo === 'Personal') {
+        titulo = 'Quitar Personal';
+        subtitulo= 'Carnet de Indentidad';
+        funcionVer = 'verPersonal()';
+        funcionEliminar = 'eliminarPersonal()';
+    } else {
+        document.querySelector('.main-content').innerHTML = `<p style="color: red;">Tipo no reconocido</p>`;
+        return;
+    }
+
+    document.querySelector('.main-content').innerHTML = `
+        <div style="max-width: 400px; margin: 40px auto; background-color: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <h3 style="text-align: center; margin-bottom: 20px;">${titulo}</h3>
+            <label for="ci_quitar" style="display: block; margin-bottom: 8px;">${subtitulo}:</label>
+            <input type="number" id="ci_quitar" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 5px; border: 1px solid #ccc;" required>
+
+            <div style="display: flex; justify-content: space-between;">
+                <button onclick="${funcionVer}" style="flex: 1; margin-right: 10px; padding: 10px; background-color: #2196F3; color: white; border: none; border-radius: 5px;">Ver</button>
+                <button onclick="${funcionEliminar}" style="flex: 1; margin-left: 10px; padding: 10px; background-color: #F44336; color: white; border: none; border-radius: 5px;">Eliminar</button>
+            </div>
+
+            <div id="infoPropietario" style="margin-top: 20px; font-size: 14px; color: #333;"></div>
+        </div>
+    `;
+}
+
+function verPropietario() {
+    const ci = document.getElementById('ci_quitar').value;
+
+    fetch('/ver_propietario', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ ci: ci })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const infoDiv = document.getElementById('infoPropietario');
+        if (data.error) {
+            infoDiv.innerHTML = `<span style="color: red;">${data.error}</span>`;
+        } else {
+            infoDiv.innerHTML = `
+                <strong>Informacion:</strong> ${data.resultado}<br>
+            `;
+        }
+    });
+}
+function eliminarPropietario() {
+    const ci = document.getElementById('ci_quitar').value;
+
+    if (!ci) {
+        alert("Por favor, ingresa un número de CI.");
+        return;
+    }
+
+    if (!confirm("¿Estás seguro de que deseas eliminar este propietario?")) {
+        return;
+    }
+
+    fetch('/eliminar_propietario', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ ci: ci })
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('infoPropietario').innerHTML =
+            `<span style="color: ${data.success ? 'green' : 'red'};">${data.message}</span>`;
+    });
+}
+function verMascota() {
+    const id = document.getElementById('ci_quitar').value;
+
+    fetch('/ver_mascota', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ id_mascota: id })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const infoDiv = document.getElementById('infoPropietario');
+        if (data.error) {
+            infoDiv.innerHTML = `<span style="color: red;">${data.error}</span>`;
+        } else {
+            infoDiv.innerHTML = `<strong>Información:</strong> ${data.resultado}<br>`;
+        }
+    });
+}
+
+function eliminarMascota() {
+    const id = document.getElementById('ci_quitar').value;
+
+    if (!id) {
+        alert("Por favor, ingresa un ID de mascota.");
+        return;
+    }
+
+    if (!confirm("¿Estás seguro de que deseas eliminar esta mascota?")) {
+        return;
+    }
+
+    fetch('/eliminar_mascota', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ id_mascota: id })
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('infoPropietario').innerHTML =
+            `<span style="color: ${data.success ? 'green' : 'red'};">${data.message}</span>`;
+    });
+}
+function verPersonal() {
+    const ci = document.getElementById('ci_quitar').value;
+
+    fetch('/ver_personal', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ ci: ci })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const infoDiv = document.getElementById('infoPropietario');
+        if (data.error) {
+            infoDiv.innerHTML = `<span style="color: red;">${data.error}</span>`;
+        } else {
+            infoDiv.innerHTML = `<strong>Información:</strong> ${data.resultado}<br>`;
+        }
+    });
+}
+
+function eliminarPersonal() {
+    const ci = document.getElementById('ci_quitar').value;
+
+    if (!ci) {
+        alert("Por favor, ingresa un número de CI.");
+        return;
+    }
+
+    if (!confirm("¿Estás seguro de que deseas eliminar este personal?")) {
+        return;
+    }
+
+    fetch('/eliminar_personal', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ ci: ci })
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('infoPropietario').innerHTML =
+            `<span style="color: ${data.success ? 'green' : 'red'};">${data.message}</span>`;
+    });
+}
+function verServicio() {
+    const id = document.getElementById('ci_quitar').value;
+
+    fetch('/ver_servicio', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ id_servicio: id })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const infoDiv = document.getElementById('infoPropietario');
+        if (data.error) {
+            infoDiv.innerHTML = `<span style="color: red;">${data.error}</span>`;
+        } else {
+            infoDiv.innerHTML = `<strong>Información:</strong> ${data.resultado}<br>`;
+        }
+    });
+}
+
+function eliminarServicio() {
+    const id = document.getElementById('ci_quitar').value;
+
+    if (!id) {
+        alert("Por favor, ingresa un ID de servicio.");
+        return;
+    }
+
+    if (!confirm("¿Estás seguro de que deseas eliminar este servicio?")) {
+        return;
+    }
+
+    fetch('/eliminar_servicio', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ id_servicio: id })
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('infoPropietario').innerHTML =
+            `<span style="color: ${data.success ? 'green' : 'red'};">${data.message}</span>`;
+    });
+}
+
+
+  function mostrarFormulario(tipo) {
+  let contenido = '';
+  const tipoLower = tipo.toLowerCase();
+
+  if (tipo === 'Propietario') {
+    contenido = `
+      <form id="form-agregar-${tipoLower}">
+        <label for="ci">Carnet de Identidad:</label>
+        <input type="text" name="ci" id="ci" required style="width: 100%; padding: 10px; margin-bottom: 15px;">
+
+        <label for="nombre">Nombre:</label>
+        <input type="text" name="nombre" id="nombre" required style="width: 100%; padding: 10px; margin-bottom: 15px;">
+
+        <label for="apellido">Apellido</label>
+        <input type="text" name="apellido" id="apellido" required style="width: 100%; padding: 10px; margin-bottom: 15px;">
+
+        <label for="telefono">Teléfono</label>
+        <input type="text" name="telefono" id="telefono" required style="width: 100%; padding: 10px; margin-bottom: 15px;">
+
+        <label for="direccion">Dirección</label>
+        <input type="text" name="direccion" id="direccion" required style="width: 100%; padding: 10px; margin-bottom: 15px;">
+
+        <label for="correo">Correo</label>
+        <input type="email" name="correo" id="correo" required style="width: 100%; padding: 10px; margin-bottom: 15px;">
+      </form>
+    `;
+  }
+
+  if (tipo === 'Mascota') {
+    contenido = `
+      <form id="form-agregar-${tipoLower}">
+        <label for="id_mascota">ID Mascota</label>
+        <input type="number" name="id_mascota" id="id_mascota" required style="width: 100%; padding: 10px; margin-bottom: 15px;">
+
+        <label for="edad">Edad</label>
+        <input type="number" name="edad" id="edad" required style="width: 100%; padding: 10px; margin-bottom: 15px;">
+
+        <label for="nombre">Nombre</label>
+        <input type="text" name="nombre" id="nombre" required style="width: 100%; padding: 10px; margin-bottom: 15px;">
+
+        <label for="especie">Especie</label>
+        <input type="text" name="especie" id="especie" required style="width: 100%; padding: 10px; margin-bottom: 15px;">
+
+        <label for="raza">Raza</label>
+        <input type="text" name="raza" id="raza" required style="width: 100%; padding: 10px; margin-bottom: 15px;">
+
+        <label for="color">Color</label>
+        <input type="text" name="color" id="color" required style="width: 100%; padding: 10px; margin-bottom: 15px;">
+
+        <label for="sexo">Sexo</label>
+        <input type="text" name="sexo" id="sexo" required style="width: 100%; padding: 10px; margin-bottom: 15px;">
+
+        <label for="ci_propietario">CI Propietario</label>
+        <input type="number" name="ci_propietario" id="ci_propietario" required style="width: 100%; padding: 10px; margin-bottom: 15px;">
+      </form>
+    `;
+  }
+
+  if (tipo === 'Personal') {
+    contenido = `
+      <form id="form-agregar-${tipoLower}">
+        <label for="ci_personal">CI Personal</label>
+        <input type="text" name="ci_personal" id="ci_personal" required style="width: 100%; padding: 10px; margin-bottom: 15px;">
+
+        <label for="nombre">Nombre</label>
+        <input type="text" name="nombre" id="nombre" required style="width: 100%; padding: 10px; margin-bottom: 15px;">
+
+        <label for="apellido_paterno">Apellido Paterno</label>
+        <input type="text" name="apellido_paterno" id="apellido_paterno" required style="width: 100%; padding: 10px; margin-bottom: 15px;">
+
+        <label for="apellido_materno">Apellido Materno</label>
+        <input type="text" name="apellido_materno" id="apellido_materno" required style="width: 100%; padding: 10px; margin-bottom: 15px;">
+
+        <label for="turno">Turno</label>
+        <input type="text" name="turno" id="turno" required style="width: 100%; padding: 10px; margin-bottom: 15px;">
+
+        <label for="rol">Rol</label>
+        <select name="rol" id="rol" onchange="mostrarCamposAdicionalesPersonal()">
+          <option value="">Seleccione</option>
+          <option value="veterinario">Veterinario</option>
+          <option value="asistente">Asistente</option>
+          <option value="peluquero">Peluquero</option>
+          <option value="administrativo">Administrativo</option>
+        </select>
+
+        <div id="extra-personal"></div>
+      </form>
+    `;
+  }
+
+  if (tipo === 'Servicios') {
+    contenido = `
+      <form id="form-agregar-${tipoLower}">
+        <label for="id_servicio">ID Servicio</label>
+        <input type="number" name="id_servicio" id="id_servicio" required style="width: 100%; padding: 10px; margin-bottom: 15px;">
+
+        <label for="precio">Precio</label>
+        <input type="number" name="precio" id="precio" required style="width: 100%; padding: 10px; margin-bottom: 15px;">
+
+        <label for="tipo_servicio">Tipo de Servicio</label>
+        <select name="tipo_servicio" id="tipo_servicio" onchange="mostrarCamposAdicionalesServicio()">
+          <option value="">Seleccione</option>
+          <option value="vacunatorio">Vacunatorio</option>
+          <option value="cirugia">Cirugía</option>
+          <option value="peluqueria">Peluquería</option>
+        </select>
+
+        <div id="extra-servicio"></div>
+      </form>
+    `;
+  }
+
+  document.querySelector('.main-content').innerHTML = `
+    <div style="max-width: 500px; margin: 40px auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+      <h2 style="text-align: center; color: #337567;">Agregar ${tipo}</h2>
+      ${contenido}
+      <div style="text-align: center; margin-top: 20px;">
+        <button onclick="enviarFormulario('${tipoLower}')" style="padding: 10px 20px; background-color: #337567; color: white; border: none; border-radius: 5px;">Confirmar</button>
+      </div>
+    </div>
+  `;
+}
+
+// Campos extra según tipo de personal
+function mostrarCamposAdicionalesPersonal() {
+  const rol = document.getElementById("rol").value;
+  const contenedor = document.getElementById("extra-personal");
+
+  let campos = '';
+  if (rol === "veterinario") {
+    campos = `<label for="especialidad">Especialidad</label>
+              <input type="text" name="especialidad" id="especialidad" required style="width: 100%; padding: 10px; margin-bottom: 15px;">`;
+  } else if (rol === "asistente") {
+    campos = `<label for="nivel">Nivel</label>
+              <input type="text" name="nivel" id="nivel" required style="width: 100%; padding: 10px; margin-bottom: 15px;">`;
+  } else if (rol === "peluquero") {
+    campos = `<label for="tipo">Tipo</label>
+              <input type="text" name="tipo" id="tipo" required style="width: 100%; padding: 10px; margin-bottom: 15px;">`;
+  } else if (rol === "administrativo") {
+    campos = `<label for="cargo">Cargo</label>
+              <input type="text" name="cargo" id="cargo" required style="width: 100%; padding: 10px; margin-bottom: 15px;">`;
+  }
+  contenedor.innerHTML = campos;
+}
+
+// Campos extra según tipo de servicio
+function mostrarCamposAdicionalesServicio() {
+  const tipo = document.getElementById("tipo_servicio").value;
+  const contenedor = document.getElementById("extra-servicio");
+
+  let campos = '';
+  if (tipo === "vacunatorio") {
+    campos = `
+      <label for="nombre_vacuna">Nombre</label>
+      <input type="text" id="nombre_vacuna" required style="width: 100%; padding: 10px; margin-bottom: 15px;">
+      <label for="dosis">Dosis</label>
+      <input type="text" id="dosis" required style="width: 100%; padding: 10px; margin-bottom: 15px;">
+      <label for="frecuencia">Frecuencia</label>
+      <input type="text" id="frecuencia" required style="width: 100%; padding: 10px; margin-bottom: 15px;">`;
+  } else if (tipo === "cirugia") {
+    campos = `
+      <label for="tipo_cirugia">Tipo</label>
+      <input type="text" id="tipo_cirugia" required style="width: 100%; padding: 10px; margin-bottom: 15px;">
+      <label for="complejidad">Complejidad</label>
+      <input type="text" id="complejidad" required style="width: 100%; padding: 10px; margin-bottom: 15px;">`;
+  } else if (tipo === "peluqueria") {
+    campos = `
+      <label for="corte_unas">Corte Uñas</label>
+      <input type="checkbox" id="corte_unas" style="width: 100%; padding: 10px; margin-bottom: 15px;">
+      <label for="tipo_corte">Tipo de Corte</label>
+      <input type="text" id="tipo_corte" required style="width: 100%; padding: 10px; margin-bottom: 15px;">`;
+  }
+  contenedor.innerHTML = campos;
+}
+
+function enviarFormulario(tipo) {
+  const tipoLower = tipo.toLowerCase();
+  const form = document.getElementById(`form-agregar-${tipoLower}`);
+  const formData = new FormData(form);
+
+  // Convertimos a objeto JS
+  const datos = {};
+  formData.forEach((value, key) => {
+    datos[key] = value;
+  });
+
+  fetch(`/agregar/${tipoLower}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(datos)
+  })
+  .then(response => {
+    if (!response.ok) throw new Error('Error en la solicitud');
+    return response.json();
+  })
+  .then(data => {
+    alert(`Registro de ${tipo} agregado correctamente`);
+    form.reset();
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert(`Hubo un problema al agregar ${tipo}`);
+  });
+}
+
+
+
+
+  </script>
+</head>
+<body>
+  <header>
+    <h1>CLINICA VETERINARIA</h1>
+    <div style="text-align: center;">
+      <img src="/static/images/aaa.png" alt="Admin" class="profile-pic" />
+      <div style="font-size: 14px; color: white;">Admin</div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="sidebar">
+      <h2>MENU</h2>
+      <a href="#" id="home-link" onclick="mostrarInicio()">Inicio</a>
+      <a href="#" id="admin-link" onclick="activarAdmin()">Administración de datos</a>
+      <a href="#" id="report-link" onclick="activarReporte()">Reportes</a>
+      <a href="#" id="citas-link" onclick="activarCitas()">Citas</a>
+      <a href="#" id="inventario-link" onclick="activarInventario()">Inventario</a>
+      <a href="#" id="consola-link" onclick="activarConsola()">Consola</a>
+      <a href="/ayuda">AYUDA</a>
+      <a href="/logout">CERRAR SESIÓN</a>
+    </div>
+
+    <div class="main-content">
+      <div style="text-align: center; margin-top: 40px;">
+        <img src="/static/images/logo.jpg" alt="Logo Clínica" style="max-width: 300px;">
+        <h2 style="margin-top: 20px;">Bienvenido al sistema de gestión de la clínica veterinaria</h2>
+        <p>Seleccione una opción del menú lateral para comenzar.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
