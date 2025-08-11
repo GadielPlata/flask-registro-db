@@ -14,6 +14,11 @@ Este es un sistema de registro web desarrollado con Flask y conectado a una base
 - PostgreSQL
 - HTML, CSS
 
+## 📷 Capturas de pantalla
+
+
+| ![](Conversor/capturas/im1.png) | ![](Conversor/capturas/im2.png) | ![](Conversor/capturas/im3.png) | ![](Conversor/capturas/im4.png) |
+
 
 ## Cómo ejecutar
 ```bash
