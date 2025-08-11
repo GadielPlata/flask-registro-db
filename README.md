@@ -17,7 +17,7 @@ Este es un sistema de registro web desarrollado con Flask y conectado a una base
 ## 📷 Capturas de pantalla
 
 
-| ![](Conversor/capturas/im1.png) | ![](Conversor/capturas/im2.png) | ![](Conversor/capturas/im3.png) | ![](Conversor/capturas/im4.png) |
+| ![](Flask-Postgres/capturas/im1.png) | ![](Flask-Postgres/capturas/im2.png) | ![](Flask-Postgres/capturas/im3.png) | ![](Flask-Postgres/capturas/im4.png) |
 
 
 ## Cómo ejecutar
